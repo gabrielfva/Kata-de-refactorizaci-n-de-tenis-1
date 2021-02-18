@@ -13,66 +13,95 @@ public class TennisGame1 implements TennisGame {
         this.player2Score = 0;
     }
 
+    public int getPlayer1Score() {
+        return player1Score;
+    }
+
+    public int getPlayer2Score() {
+        return player2Score;
+    }
+
+    public String getPlayer1Name() {
+        return player1Name;
+    }
+
+    public String getPlayer2Name() {
+        return player2Name;
+    }
+
     public void wonPoint(String playerName) {
-        if (playerName.equals(this.player1Name))
-            this.player1Score ++;
-        else
-            this.player2Score ++;
+        if (playerName.equals(this.getPlayer1Name())) {
+            this.player1Score++;
+        } else if (playerName.equals(this.getPlayer2Name())) {
+            this.player2Score++;
+        }
     }
 
     public String getScore() {
         String score = "";
-        int tempScore = 0;
-        if (this.player1Score == this.player2Score) {
-            switch (this.player1Score) {
+
+        if (this.getPlayer1Score() == this.getPlayer2Score()) {
+            score = this.setTie(this.getPlayer1Score());
+        } else if ((this.getPlayer1Score() >= 4) || (this.getPlayer2Score() >= 4)) {
+            score = setDifferenceScores();
+        } else {
+            score = this.setTemporalScore(score);
+        }
+        return score;
+    }
+
+    private String setTie(int player1Score) {
+        switch (player1Score) {
+            case 0:
+                return "Love-All";
+            case 1:
+                return "Fifteen-All";
+            case 2:
+                return "Thirty-All";
+            default:
+                return "Deuce";
+        }
+
+    }
+
+    private String setDifferenceScores () {
+        int differenceScores = player1Score - player2Score;
+
+        if (differenceScores == 1) {
+            return "Advantage player1";
+        } else if (differenceScores == -1) {
+            return "Advantage player2";
+        } else if (differenceScores >= 2) {
+            return "Win for player1";
+        } else {
+            return "Win for player2";
+        }
+    }
+
+    private String setTemporalScore(String score) {
+        int tempScore;
+
+        for (int i = 1; i < 3; i++) {
+            if (i == 1) {
+                tempScore = this.getPlayer1Score();
+            } else {
+                score = score.concat("-");
+                tempScore = this.getPlayer2Score();
+            }
+
+            switch (tempScore) {
                 case 0:
-                        score = "Love-All";
+                    score = score.concat("Love");
                     break;
                 case 1:
-                        score = "Fifteen-All";
+                    score = score.concat("Fifteen");
                     break;
                 case 2:
-                        score = "Thirty-All";
+                    score = score.concat("Thirty");
                     break;
                 default:
-                        score = "Deuce";
+                    score = score.concat("Forty");
                     break;
-            }
-        }
-        else if (this.player1Score >= 4 || this.player2Score >= 4){
-            int minusResult = this.player1Score - this.player2Score;
-            if (minusResult == 1)
-                score = "Advantage player1";
-            else
-                if (minusResult == -1)
-                    score = "Advantage player2";
-            else
-                if (minusResult >=2 )
-                    score = "Win for player1";
-            else
-                score = "Win for player2";
-        }
-        else {
-            for (int i = 1; i < 3; i ++) {
-                if (i == 1) tempScore = this.player1Score;
-                else {
-                    score = score.concat("-");
-                    tempScore = this.player2Score;
-                }
-                switch(tempScore) {
-                    case 0:
-                        score = score.concat("Love");
-                        break;
-                    case 1:
-                        score = score.concat("Fifteen");
-                        break;
-                    case 2:
-                        score = score.concat("Thirty");
-                        break;
-                    default:
-                        score = score.concat("Forty");
-                        break;
-                }
             }
         }
         return score;
